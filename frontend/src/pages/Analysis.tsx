@@ -1,10 +1,11 @@
-import { useState } from 'react'
-import { Upload, FileText, Globe, BarChart3, TrendingUp, AlertCircle } from 'lucide-react'
+import { useState, useRef } from 'react'
+import { Upload, FileText, BarChart3, TrendingUp, AlertCircle, X } from 'lucide-react'
 
 const Analysis = () => {
   const [activeTab, setActiveTab] = useState<'upload' | 'results'>('upload')
   const [files, setFiles] = useState<File[]>([])
   const [isAnalyzing, setIsAnalyzing] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -12,13 +13,21 @@ const Analysis = () => {
     }
   }
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault()
-      const fileInput = event.currentTarget.querySelector('input[type="file"]') as HTMLInputElement
-      fileInput?.click()
+  const handleUploadClick = () => {
+    fileInputRef.current?.click()
+  }
+
+  const handleRemoveFile = (indexToRemove: number) => {
+    setFiles(files.filter((_, index) => index !== indexToRemove))
+  }
+
+  const handleRemoveAllFiles = () => {
+    setFiles([])
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
     }
   }
+
 
   const handleAnalyze = async () => {
     setIsAnalyzing(true)
@@ -92,43 +101,82 @@ const Analysis = () => {
               Upload Founder Materials
             </h2>
             
-            <div 
-              className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-primary-400 transition-colors"
-              tabIndex={0}
-              onKeyDown={handleKeyDown}
-              role="button"
-              aria-describedby="file-upload-description"
-            >
-              <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <div className="space-y-2" id="file-upload-description">
-                <p className="text-lg font-medium text-gray-900">
-                  Drop files here or click to browse
-                </p>
-                <p className="text-gray-500">
-                  Supported formats: PDF, DOC, PPT, XLS, TXT
-                </p>
+            {files.length === 0 ? (
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <div className="space-y-2" id="file-upload-description">
+                  <p className="text-lg font-medium text-gray-900">
+                    Drop files here or click button to browse
+                  </p>
+                  <p className="text-gray-500">
+                    Supported formats: PDF, DOC, PPT, XLS, TXT
+                  </p>
+                </div>
+                <button
+                  onClick={handleUploadClick}
+                  className="mt-4 px-6 py-2 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                  aria-describedby="file-upload-description"
+                >
+                  Choose Files
+                </button>
               </div>
-              <input
-                type="file"
-                multiple
-                onChange={handleFileUpload}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt"
-                aria-label="Upload founder materials - supported formats: PDF, DOC, PPT, XLS, TXT"
-              />
-            </div>
-
-            {files.length > 0 && (
-              <div className="mt-4 space-y-2">
-                <h3 className="font-medium text-gray-900">Uploaded Files:</h3>
-                {files.map((file, index) => (
-                  <div key={index} className="flex items-center space-x-2 text-sm text-gray-600">
-                    <FileText className="h-4 w-4" />
-                    <span>{file.name}</span>
+            ) : (
+              <div className="border-2 border-solid border-green-300 rounded-lg p-6 bg-green-50">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center space-x-2">
+                    <FileText className="h-5 w-5 text-green-600" />
+                    <p className="text-lg font-medium text-green-800">
+                      {files.length} file{files.length > 1 ? 's' : ''} uploaded successfully
+                    </p>
                   </div>
-                ))}
+                  <button
+                    onClick={handleRemoveAllFiles}
+                    className="text-green-600 hover:text-green-800 transition-colors"
+                    title="Remove all files"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+                <div className="space-y-2 mb-4">
+                  {files.map((file, index) => (
+                    <div key={index} className="flex items-center justify-between bg-white rounded-md p-2">
+                      <div className="flex items-center space-x-2">
+                        <FileText className="h-4 w-4 text-gray-500" />
+                        <span className="text-sm text-gray-700">{file.name}</span>
+                        <span className="text-xs text-gray-500">
+                          ({(file.size / 1024 / 1024).toFixed(2)} MB)
+                        </span>
+                      </div>
+                      <button
+                        onClick={() => handleRemoveFile(index)}
+                        className="text-red-500 hover:text-red-700 transition-colors p-1"
+                        title="Remove this file"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <button
+                  onClick={handleUploadClick}
+                  className="text-primary-600 hover:text-primary-800 text-sm font-medium transition-colors"
+                >
+                  Add more files
+                </button>
               </div>
             )}
+            
+            {/* Hidden file input */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              onChange={handleFileUpload}
+              className="hidden"
+              accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt"
+              aria-label="Upload founder materials - supported formats: PDF, DOC, PPT, XLS, TXT"
+            />
+
           </div>
 
           <div className="bg-white rounded-xl border border-gray-200 p-6">
