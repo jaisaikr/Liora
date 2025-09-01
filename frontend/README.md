@@ -4,8 +4,11 @@ The frontend for Liora, an AI-powered analyst platform that evaluates startups b
 
 ## Tech Stack
 
-- **Framework**: Next.js
-- **Language**: TypeScript/JavaScript
+- **Build Tool**: Vite
+- **Framework**: React 18 with TypeScript
+- **Styling**: Tailwind CSS
+- **Routing**: React Router v6
+- **Icons**: Lucide React
 
 ## Getting Started
 
@@ -38,25 +41,30 @@ npm run dev
 yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:5173](http://localhost:5173) with your browser to see the result.
 
 ## Project Structure
 
 ```
 frontend/
-├── pages/          # Next.js pages
-├── components/     # Reusable React components
-├── styles/         # CSS and styling files
-├── public/         # Static assets
-├── lib/           # Utility functions and configurations
-└── types/         # TypeScript type definitions
+├── src/
+│   ├── components/     # Reusable UI components
+│   ├── pages/         # Main application pages
+│   ├── hooks/         # Custom React hooks
+│   ├── services/      # API calls and business logic
+│   ├── types/         # TypeScript definitions
+│   ├── styles/        # CSS/Tailwind styles
+│   └── App.tsx        # Main app component
+├── public/            # Static assets
+├── index.html         # Vite entry point
+└── vite.config.ts     # Vite configuration
 ```
 
 ## Available Scripts
 
 - `npm run dev` - Start development server
 - `npm run build` - Build for production
-- `npm run start` - Start production server
+- `npm run preview` - Preview production build
 - `npm run lint` - Run ESLint
 - `npm run type-check` - Run TypeScript type checking
 
