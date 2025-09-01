@@ -12,6 +12,14 @@ const Analysis = () => {
     }
   }
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault()
+      const fileInput = event.currentTarget.querySelector('input[type="file"]') as HTMLInputElement
+      fileInput?.click()
+    }
+  }
+
   const handleAnalyze = async () => {
     setIsAnalyzing(true)
     // Simulate analysis delay
@@ -84,9 +92,15 @@ const Analysis = () => {
               Upload Founder Materials
             </h2>
             
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-primary-400 transition-colors">
+            <div 
+              className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-primary-400 transition-colors"
+              tabIndex={0}
+              onKeyDown={handleKeyDown}
+              role="button"
+              aria-describedby="file-upload-description"
+            >
               <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <div className="space-y-2">
+              <div className="space-y-2" id="file-upload-description">
                 <p className="text-lg font-medium text-gray-900">
                   Drop files here or click to browse
                 </p>
@@ -100,6 +114,7 @@ const Analysis = () => {
                 onChange={handleFileUpload}
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt"
+                aria-label="Upload founder materials - supported formats: PDF, DOC, PPT, XLS, TXT"
               />
             </div>
 
