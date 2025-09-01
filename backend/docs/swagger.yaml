@@ -1,0 +1,570 @@
+basePath: /
+consumes:
+- application/json
+definitions:
+  handlers.APIStatusResponse:
+    properties:
+      api:
+        type: string
+      endpoints:
+        items:
+          type: string
+        type: array
+      status:
+        type: string
+      timestamp:
+        type: string
+      version:
+        type: string
+    type: object
+  handlers.HealthStatus:
+    properties:
+      status:
+        type: string
+      timestamp:
+        type: string
+      version:
+        type: string
+    type: object
+  models.Analysis:
+    properties:
+      company_id:
+        type: string
+      completed_at:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      insights:
+        items:
+          type: string
+        type: array
+      key_metrics:
+        items:
+          $ref: '#/definitions/models.Metric'
+        type: array
+      overall_score:
+        type: number
+      progress:
+        description: 0-100
+        type: integer
+      recommendation:
+        type: string
+      risks:
+        items:
+          type: string
+        type: array
+      status:
+        $ref: '#/definitions/models.AnalysisStatus'
+      updated_at:
+        type: string
+    type: object
+  models.AnalysisStatus:
+    enum:
+    - pending
+    - processing
+    - completed
+    - failed
+    type: string
+    x-enum-varnames:
+    - StatusPending
+    - StatusProcessing
+    - StatusCompleted
+    - StatusFailed
+  models.AnalysisStatusResponse:
+    properties:
+      id:
+        type: string
+      message:
+        type: string
+      progress:
+        type: integer
+      status:
+        $ref: '#/definitions/models.AnalysisStatus'
+    type: object
+  models.Company:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      funding_stage:
+        type: string
+      id:
+        type: string
+      industry:
+        type: string
+      name:
+        type: string
+      updated_at:
+        type: string
+      website:
+        type: string
+    required:
+    - funding_stage
+    - industry
+    - name
+    type: object
+  models.CreateCompanyRequest:
+    properties:
+      description:
+        type: string
+      funding_stage:
+        type: string
+      industry:
+        type: string
+      name:
+        type: string
+      website:
+        type: string
+    required:
+    - funding_stage
+    - industry
+    - name
+    type: object
+  models.Metric:
+    properties:
+      color:
+        type: string
+      label:
+        type: string
+      value:
+        type: number
+    type: object
+  models.StartAnalysisRequest:
+    properties:
+      company_id:
+        type: string
+      file_ids:
+        items:
+          type: string
+        type: array
+    required:
+    - company_id
+    - file_ids
+    type: object
+  models.UpdateCompanyRequest:
+    properties:
+      description:
+        type: string
+      funding_stage:
+        type: string
+      industry:
+        type: string
+      name:
+        type: string
+      website:
+        type: string
+    type: object
+  models.UploadResponse:
+    properties:
+      files:
+        items:
+          $ref: '#/definitions/models.UploadedFile'
+        type: array
+    type: object
+  models.UploadedFile:
+    properties:
+      content_type:
+        type: string
+      filename:
+        type: string
+      id:
+        type: string
+      original_name:
+        type: string
+      size:
+        type: integer
+      status:
+        description: uploaded, processing, processed, error
+        type: string
+      uploaded_at:
+        type: string
+    type: object
+  utils.APIResponse:
+    properties:
+      data: {}
+      error:
+        type: string
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: team@liora.ai
+    name: Liora Team
+  description: AI-powered startup analysis platform that evaluates startups by synthesizing
+    founder materials and public data to generate investment insights.
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  termsOfService: http://swagger.io/terms/
+  title: Liora Backend API
+  version: "1.0"
+paths:
+  /api/v1/analysis/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get complete analysis results including scores, insights, and recommendations
+      parameters:
+      - description: Analysis ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Analysis'
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+      summary: Get analysis results
+      tags:
+      - analysis
+  /api/v1/analysis/{id}/report:
+    get:
+      consumes:
+      - application/json
+      description: Download comprehensive analysis report (PDF format)
+      parameters:
+      - description: Analysis ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Analysis'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+      summary: Download analysis report
+      tags:
+      - analysis
+  /api/v1/analysis/{id}/status:
+    get:
+      consumes:
+      - application/json
+      description: Get current status and progress of an analysis
+      parameters:
+      - description: Analysis ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.AnalysisStatusResponse'
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+      summary: Get analysis status
+      tags:
+      - analysis
+  /api/v1/analysis/start:
+    post:
+      consumes:
+      - application/json
+      description: Initiate AI-powered analysis of a startup using uploaded materials
+      parameters:
+      - description: Analysis request
+        in: body
+        name: analysis
+        required: true
+        schema:
+          $ref: '#/definitions/models.StartAnalysisRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Analysis'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+      summary: Start startup analysis
+      tags:
+      - analysis
+  /api/v1/companies:
+    post:
+      consumes:
+      - application/json
+      description: Create a new company profile for analysis
+      parameters:
+      - description: Company information
+        in: body
+        name: company
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateCompanyRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Company'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+      summary: Create a new company
+      tags:
+      - companies
+  /api/v1/companies/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get company information by ID
+      parameters:
+      - description: Company ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Company'
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+      summary: Get company details
+      tags:
+      - companies
+    put:
+      consumes:
+      - application/json
+      description: Update company details by ID
+      parameters:
+      - description: Company ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated company information
+        in: body
+        name: company
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateCompanyRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Company'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+      summary: Update company information
+      tags:
+      - companies
+  /api/v1/status:
+    get:
+      consumes:
+      - application/json
+      description: Get API status, version, and available endpoints
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/handlers.APIStatusResponse'
+              type: object
+      summary: API status and information
+      tags:
+      - health
+  /api/v1/upload:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Upload multiple files (PDF, DOC, PPT, XLS, TXT) for analysis
+      parameters:
+      - description: Files to upload
+        in: formData
+        name: files
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.UploadResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+      summary: Upload founder materials and documents
+      tags:
+      - upload
+  /api/v1/uploads/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an uploaded file from storage
+      parameters:
+      - description: File ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+      summary: Delete uploaded file
+      tags:
+      - upload
+    get:
+      consumes:
+      - application/json
+      description: Get status and details of an uploaded file
+      parameters:
+      - description: File ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.UploadedFile'
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+      summary: Get upload file status
+      tags:
+      - upload
+  /health:
+    get:
+      consumes:
+      - application/json
+      description: Check if the API is running and healthy
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.HealthStatus'
+      summary: Health check endpoint
+      tags:
+      - health
+produces:
+- application/json
+schemes:
+- http
+- https
+swagger: "2.0"
