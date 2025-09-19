@@ -13,21 +13,15 @@
 # limitations under the License.
 
 # mypy: disable-error-code="union-attr"
-from unittest.mock import MagicMock, patch
-
 from google.adk.agents.run_config import RunConfig, StreamingMode
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.genai import types
 
-from app.agent import root_agent
+from RAG.agent import root_agent
 
 
-@patch(
-    "app.agent.retrieve_docs",
-    return_value="dummy content",
-)
-def test_agent_stream(mock_retrieve: MagicMock) -> None:
+def test_agent_stream() -> None:
     """
     Integration test for the agent stream functionality.
     Tests that the agent returns valid streaming responses.

@@ -28,10 +28,10 @@ from opentelemetry.sdk.trace import TracerProvider, export
 from vertexai._genai.types import AgentEngine, AgentEngineConfig
 from vertexai.agent_engines.templates.adk import AdkApp
 
-from app.agent import root_agent
-from app.utils.gcs import create_bucket_if_not_exists
-from app.utils.tracing import CloudTraceLoggingSpanExporter
-from app.utils.typing import Feedback
+from RAG.agent import root_agent
+from RAG.utils.gcs import create_bucket_if_not_exists
+from RAG.utils.tracing import CloudTraceLoggingSpanExporter
+from RAG.utils.typing import Feedback
 
 
 class AgentEngineApp(AdkApp):
@@ -72,7 +72,7 @@ def deploy_agent_engine_app(
     location: str,
     agent_name: str | None = None,
     requirements_file: str = ".requirements.txt",
-    extra_packages: list[str] = ["./app"],
+    extra_packages: list[str] = ["./RAG"],
     env_vars: dict[str, str] = {},
     service_account: str | None = None,
 ) -> AgentEngine:
@@ -111,7 +111,7 @@ def deploy_agent_engine_app(
     # Common configuration for both create and update operations
     config = AgentEngineConfig(
         display_name=agent_name,
-        description="ADK RAG agent for document retrieval and Q&A. Includes a data pipeline for ingesting and indexing documents into Vertex AI Search or Vector Search.",
+        description="Answer questions related to Vertex AI documentation using Vertex AI RAG Engine",
         extra_packages=extra_packages,
         env_vars=env_vars,
         service_account=service_account,
@@ -169,8 +169,8 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--location",
-        default="us-central1",
-        help="GCP region (defaults to us-central1)",
+        default="us-east4",
+        help="GCP region (defaults to us-east4)",
     )
     parser.add_argument(
         "--agent-name",
@@ -185,7 +185,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--extra-packages",
         nargs="+",
-        default=["./app"],
+        default=["./RAG"],
         help="Additional packages to include",
     )
     parser.add_argument(

@@ -17,8 +17,8 @@ import logging
 import pytest
 from google.adk.events.event import Event
 
-from app.agent import root_agent
-from app.agent_engine_app import AgentEngineApp
+from RAG.agent import root_agent
+from RAG.agent_engine_app import AgentEngineApp
 
 
 @pytest.fixture

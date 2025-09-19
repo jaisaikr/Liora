@@ -47,7 +47,7 @@ steps:
       - "-c"
       - |
         uv export --no-hashes --no-sources --no-header --no-dev --no-emit-project --no-annotate --locked > .requirements.txt
-        uv run app/agent_engine_app.py \
+        uv run RAG/agent_engine_app.py \
           --project ${_STAGING_PROJECT_ID} \
           --location ${_REGION} \
           --service-account ${_APP_SA_EMAIL_STAGING} \
@@ -125,7 +125,7 @@ steps:
 
 substitutions:
   _STAGING_PROJECT_ID: YOUR_STAGING_PROJECT_ID
-  _REGION: us-central1
+  _REGION: us-east4
 
 logsBucket: gs://${PROJECT_ID}-summarize-agent-logs-data/build-logs
 options:

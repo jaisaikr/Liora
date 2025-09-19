@@ -7,9 +7,9 @@ playground:
 	@echo "==============================================================================="
 	@echo "| 🚀 Starting your agent playground...                                        |"
 	@echo "|                                                                             |"
-	@echo "| 💡 Try asking: How to save a pandas dataframe to CSV?                       |"
+	@echo "| 💡 Try asking: What's the weather in San Francisco?                         |"
 	@echo "|                                                                             |"
-	@echo "| 🔍 IMPORTANT: Select the 'app' folder to interact with your agent.          |"
+	@echo "| 🔍 IMPORTANT: Select the 'RAG' folder to interact with your agent.          |"
 	@echo "==============================================================================="
 	uv run adk web . --port 8501 --reload_agents
 
@@ -17,7 +17,7 @@ playground:
 backend:
 	# Export dependencies to requirements file using uv export.
 	uv export --no-hashes --no-header --no-dev --no-emit-project --no-annotate > .requirements.txt 2>/dev/null || \
-	uv export --no-hashes --no-header --no-dev --no-emit-project > .requirements.txt && uv run app/agent_engine_app.py
+	uv export --no-hashes --no-header --no-dev --no-emit-project > .requirements.txt && uv run RAG/agent_engine_app.py
 
 # Set up development environment resources using Terraform
 setup-dev-env:
@@ -29,7 +29,7 @@ data-ingestion:
 	PROJECT_ID=$$(gcloud config get-value project) && \
 	(cd data_ingestion && uv run data_ingestion_pipeline/submit_pipeline.py \
 		--project-id=$$PROJECT_ID \
-		--region="us-central1" \
+		--region="us-east4" \
 		--data-store-id="summarize-agent-datastore" \
 		--data-store-region="us" \
 		--service-account="summarize-agent-rag@$$PROJECT_ID.iam.gserviceaccount.com" \

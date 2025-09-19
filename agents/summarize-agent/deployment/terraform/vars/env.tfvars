@@ -19,7 +19,7 @@ repository_owner = "Your GitHub organization or username."
 repository_name = "summarize-agent"
 
 # The Google Cloud region you will use to deploy the infrastructure
-region = "us-central1"
+region = "us-east4"
 pipeline_cron_schedule = "0 0 * * 0"
 #The value can only be one of "global", "us" and "eu".
 data_store_region = "us"

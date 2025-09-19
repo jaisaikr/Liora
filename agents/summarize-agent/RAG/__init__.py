@@ -12,17 +12,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from langchain_core.prompts import (
-    PromptTemplate,
-)
-
-format_docs = PromptTemplate.from_template(
-    """## Context provided:
-{% for doc in docs%}
-<Document {{ loop.index0 }}>
-{{ doc.page_content | safe }}
-</Document {{ loop.index0 }}>
-{% endfor %}
-""",
-    template_format="jinja2",
-)
+from . import agent
