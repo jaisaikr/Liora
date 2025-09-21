@@ -1,0 +1,3 @@
+[submodule "liora-frontend"]
+	path = liora-frontend
+	url = https://github.com/Kargnin/liora
