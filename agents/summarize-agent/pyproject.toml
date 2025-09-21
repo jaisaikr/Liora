@@ -12,6 +12,8 @@ readme = "README.md"
 dependencies = [
     "backoff>=2.2.1",
     "bigframes>=2.21.0",
+    "dotenv>=0.9.9",
+    "google-cloud-documentai>=3.6.0",
     "markdownify>=1.2.0",
     "swifter>=1.4.0",
 ]
